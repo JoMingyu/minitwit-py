@@ -15,7 +15,7 @@ def create_app(*config_cls) -> Flask:
     JWTManager().init_app(app_)
     Router().init_app(app_)
 
-    from app.models import db, user, timeline
-    db.create_tables([user.UserModel, timeline.TweetModel])
+    from app.models import db, user, tweet
+    db.create_tables([user.UserModel, tweet.TweetModel])
 
     return app_

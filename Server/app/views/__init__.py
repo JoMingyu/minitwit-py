@@ -99,3 +99,6 @@ class Router:
     def init_app(self, app):
         app.after_request(after_request)
         app.register_error_handler(Exception, exception_handler)
+
+        from app.views import user
+        app.register_blueprint(user.api.blueprint)

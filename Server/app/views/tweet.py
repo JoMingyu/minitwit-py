@@ -10,6 +10,13 @@ api = Api(Blueprint(__name__, __name__))
 api.prefix = ''
 
 
+def extract_tweet_data(tweet):
+    return {
+        'message': tweet.message,
+        'timestamp': tweet.timestamp
+    }
+
+
 @api.resource('/tweet')
 class Tweet(BaseResource):
     @auth_required(UserModel)
@@ -36,19 +43,24 @@ class Index(BaseResource):
             else:
                 user = users[0]
 
-                return [{
-                    'message': tweet.message,
-                    'timestamp': tweet.timestamp
-                } for tweet in TweetModel.select().where(TweetModel.owner == user)]
+                return [extract_tweet_data(tweet) for tweet in TweetModel.select().where(TweetModel.owner == user)]
         else:
             return redirect(url_for('app.views.tweet.publictimeline'))
+
+
+@api.resource('/timeline/<username>')
+class UserTimeline(BaseResource):
+    def get(self, username):
+        if not UserModel.select().where(UserModel.username == username):
+            abort(404)
+
+        return [extract_tweet_data(tweet) for tweet in TweetModel.select().where(TweetModel.owner == username)]
 
 
 @api.resource('/public-timeline')
 class PublicTimeline(BaseResource):
     def get(self):
-        return [{
-            'owner': tweet.owner.username,
-            'message': tweet.message,
-            'timestamp': tweet.timestamp
-        } for tweet in TweetModel.select().limit(30)]
+        return [dict(
+            extract_tweet_data(tweet),
+            **{'owner': tweet.owner.username}
+        ) for tweet in TweetModel.select().limit(30)]

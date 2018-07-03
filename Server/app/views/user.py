@@ -29,3 +29,27 @@ class Signup(BaseResource):
 
         return Response('', 201)
 
+
+@api.resource('/login')
+class Login(BaseResource):
+    @json_required({'username': str, 'pw': str})
+    def post(self):
+        payload = request.json
+
+        username = payload['username']
+        pw = payload['pw']
+
+        users = UserModel.select().where(UserModel.username == username)
+
+        if not users:
+            abort(401)
+        else:
+            user = users[0]
+
+            if check_password_hash(user.pw_hash, pw):
+                return {
+                    'accessToken': create_access_token(username),
+                    'refreshToken': create_refresh_token(username)
+                }
+            else:
+                abort(401)

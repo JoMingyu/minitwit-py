@@ -3,7 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_optional
 from flask_restful import Api
 
 from app.models.tweet import TweetModel
-from app.models.user import UserModel
+from app.models.user import FollowModel, UserModel
 from app.views import BaseResource, auth_required, json_required
 
 api = Api(Blueprint(__name__, __name__))
@@ -50,11 +50,19 @@ class Index(BaseResource):
 
 @api.resource('/timeline/<username>')
 class UserTimeline(BaseResource):
+    @auth_required(UserModel)
     def get(self, username):
-        if not UserModel.select().where(UserModel.username == username):
+        users = UserModel.select().where(UserModel.username == username)
+
+        if not users:
             abort(404)
 
-        return [extract_tweet_data(tweet) for tweet in TweetModel.select().where(TweetModel.owner == username)]
+        user = users[0]
+
+        return {
+            'following': bool(FollowModel.select().where( (FollowModel.follower == g.user) & (FollowModel.followee == user) )),
+            'tweets': [extract_tweet_data(tweet) for tweet in TweetModel.select().where(TweetModel.owner == username)]
+        }
 
 
 @api.resource('/public-timeline')

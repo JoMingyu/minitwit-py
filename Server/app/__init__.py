@@ -16,6 +16,6 @@ def create_app(*config_cls) -> Flask:
     Router().init_app(app_)
 
     from app.models import db, user, tweet
-    db.create_tables([user.UserModel, tweet.TweetModel])
+    db.create_tables([user.UserModel, user.FollowModel, tweet.TweetModel])
 
     return app_

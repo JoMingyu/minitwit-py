@@ -2,6 +2,8 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 # from redis import Redis
 
+from app.views import Router
+
 
 def create_app(*config_cls) -> Flask:
     print('[INFO] Flask application initialized with {}'.format([config.__name__ for config in config_cls]))
@@ -12,5 +14,6 @@ def create_app(*config_cls) -> Flask:
         app_.config.from_object(config)
 
     JWTManager().init_app(app_)
+    Router().init_app(app_)
 
     return app_

@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-# from redis import Redis
 
 from app.views import Router
 
@@ -15,5 +14,8 @@ def create_app(*config_cls) -> Flask:
 
     JWTManager().init_app(app_)
     Router().init_app(app_)
+
+    from app.models import db, user, timeline
+    db.create_tables([user.UserModel, timeline.TweetModel])
 
     return app_

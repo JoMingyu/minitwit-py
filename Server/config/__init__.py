@@ -20,10 +20,3 @@ class Config:
     SQLITE_SETTINGS = {
         'database': 'minitwit.db'
     }
-
-    # REDIS_SETTINGS = {
-    #     'host': 'localhost',
-    #     'port': 6379,
-    #     'password': os.getenv('REDIS_PW_{}'.format(SERVICE_NAME_UPPER)),
-    #     'db': 0
-    # }

@@ -18,3 +18,20 @@ class UserModel(Model):
 
     class Meta:
         database = db
+
+
+class FollowModel(Model):
+    follower = ForeignKeyField(
+        model=UserModel,
+        on_delete='CASCADE',
+        on_update='CASCADE'
+    )
+
+    followee = ForeignKeyField(
+        model=UserModel,
+        on_delete='CASCADE',
+        on_update='CASCADE'
+    )
+
+    class Meta:
+        database = db

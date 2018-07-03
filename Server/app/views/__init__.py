@@ -102,3 +102,6 @@ class Router:
 
         from app.views import user
         app.register_blueprint(user.api.blueprint)
+
+        from app.views import tweet
+        app.register_blueprint(tweet.api.blueprint)

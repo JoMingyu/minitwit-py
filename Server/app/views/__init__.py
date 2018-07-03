@@ -38,9 +38,14 @@ def auth_required(model):
         @wraps(fn)
         @jwt_required
         def wrapper(*args, **kwargs):
-            raise NotImplementedError()
+            users = model.select().where(model.username == get_jwt_identity())
 
-            # return fn(*args, **kwargs)
+            if not users:
+                abort(401)
+
+            g.user = users[0]
+
+            return fn(*args, **kwargs)
         return wrapper
     return decorator
 
